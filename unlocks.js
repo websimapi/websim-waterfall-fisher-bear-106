@@ -73,8 +73,18 @@ export function getPlayerProgress() {
     try {
         const stored = localStorage.getItem(PROGRESS_KEY);
         if (stored) {
+            const loadedProgress = JSON.parse(stored);
+            // Ensure default cosmetics are always present for backward compatibility
+            const cosmetics = new Set([...(defaults.unlockedCosmetics || []), ...(loadedProgress.unlockedCosmetics || [])]);
+            loadedProgress.unlockedCosmetics = Array.from(cosmetics);
+            
+            // If selected cosmetic is somehow invalid, reset to 'none'
+            if (!loadedProgress.unlockedCosmetics.includes(loadedProgress.selectedCosmetic)) {
+                loadedProgress.selectedCosmetic = 'none';
+            }
+            
             // merge stored with defaults to prevent missing keys on updates
-            return { ...defaults, ...JSON.parse(stored) };
+            return { ...defaults, ...loadedProgress };
         }
     } catch (e) {
         console.error("Could not load player progress", e);
