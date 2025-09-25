@@ -1,5 +1,3 @@
-
-```javascript
 import * as THREE from 'three';
 import { scene, camera } from '../scene.js';
 import { bear, activeFishes, gameState, createGameBear } from './game.js';

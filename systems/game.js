@@ -48,7 +48,7 @@ export function createGameBear() {
     updateUIValues({ score: gameState.score, streak: gameState.streak });
     showHUD();
     try { initAudio(); } catch (e) { /* ignore */ }
-    
+
     activeFishes.forEach(f => scene.remove(f));
     activeFishes = [];
     resetSpawner();
