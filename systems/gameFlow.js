@@ -40,7 +40,7 @@ export function setupStartScreen(isFirstLoad = false) {
     populateUnlocks(playerProgress, (type, id) => {
         if (type === 'bear') playerProgress.selectedBear = id;
         if (type === 'fish') playerProgress.selectedFish = id;
-        if (type === 'cosmetic') playerProgress.selectedCosmetic = id === 'none' ? null : id;
+        if (type === 'cosmetic') playerProgress.selectedCosmetic = id; // Keep 'none' as id, not null
         savePlayerProgress(playerProgress);
 
         const quickBearName = document.querySelector('#choose-bear span');

@@ -68,6 +68,7 @@ export function createOrUpdateShowcase() {
     showcaseBear.name = 'showcase-bear';
     showcaseBear.userData.isShowcase = true;
     showcaseBear.userData.bearType = playerProgress.selectedBear;
+    showcaseBear.userData.cosmeticId = playerProgress.selectedCosmetic || 'none';
     showcaseBear.position.set(0, 4.65, 0.8);
     showcaseBear.rotation.x = 0; // keep facing direction from createBear()
     showcaseBear.rotation.z = 0;
@@ -219,8 +220,8 @@ export function waddleOutShowcaseBear(toRight = true, done) {
       .onComplete(() => {
         const startX = showcaseBear.position.x;
         new TWEEN.Tween(showcaseBear.position).to({ x: targetX }, 1400).easing(TWEEN.Easing.Quadratic.In)
-          .onUpdate(() => { const t = (showcaseBear.position.x - startX) / (targetX - startX); const ph = t * Math.PI * 6; showcaseBear.rotation.z = Math.sin(ph) * 0.18 * (toRight ? -1 : 1); showcaseBear.position.y = baseY + Math.abs(Math.sin(ph)) * 0.12; })
-          .onComplete(() => { showcaseBear.rotation.z = 0; showcaseBear.position.y = baseY; try { scene.remove(showcaseBear); } catch {} showcaseBear = null; done?.(); })
+          .onUpdate(() => { const t = (showcaseBear.position.x - startX) / (targetX - startX); const ph = t * Math.PI * 6; if (showcaseBear) { showcaseBear.rotation.z = Math.sin(ph) * 0.18 * (toRight ? -1 : 1); showcaseBear.position.y = baseY + Math.abs(Math.sin(ph)) * 0.12; } })
+          .onComplete(() => { if (showcaseBear) { showcaseBear.rotation.z = 0; showcaseBear.position.y = baseY; try { scene.remove(showcaseBear); } catch {} showcaseBear = null; } done?.(); })
           .start();
       }).start();
 }
@@ -229,23 +230,34 @@ export function swapShowcaseToCurrentSelection() {
     const progress = getPlayerProgress();
     const newBearType = progress.selectedBear;
     const newFishType = progress.selectedFish;
-    if (showcaseBear && showcaseBear.userData?.bearType === newBearType) {
-        // only fish changed -> swap fish in hand
-        const rightAnchor = getHandAnchor(showcaseBear, 'right');
-        if (rightAnchor) {
-            if (showcaseFish?.parent) showcaseFish.parent.remove(showcaseFish);
-            showcaseFish = createFish(scene, 0, newFishType, {}, false);
-            showcaseFish.name = 'showcase-fish';
-            showcaseFish.userData.pattern = 'held';
-            rightAnchor.add(showcaseFish);
-            showcaseFish.position.set(0.12, -0.35, 0.35);
-            showcaseFish.rotation.set(-Math.PI/6, Math.PI/2, Math.PI);
-            showcaseFish.scale.set(0.5,0.5,0.5);
-            setupShowcaseAnimation();
+    const newCosmeticId = progress.selectedCosmetic || 'none';
+    const oldBearType = showcaseBear?.userData?.bearType;
+    const oldCosmeticId = showcaseBear?.userData?.cosmeticId || 'none';
+
+    // If bear type or cosmetic is different, we need to swap the bear.
+    const bearNeedsSwap = oldBearType !== newBearType || oldCosmeticId !== newCosmeticId;
+    
+    if (showcaseBear && !bearNeedsSwap) {
+        // Only fish changed, or nothing changed. Swap fish if needed.
+        if (showcaseFish?.userData?.fishType !== newFishType) {
+            const rightAnchor = getHandAnchor(showcaseBear, 'right');
+            if (rightAnchor) {
+                if (showcaseFish?.parent) showcaseFish.parent.remove(showcaseFish);
+                showcaseFish = createFish(scene, 0, newFishType, {}, false);
+                showcaseFish.name = 'showcase-fish';
+                showcaseFish.userData.fishType = newFishType;
+                showcaseFish.userData.pattern = 'held';
+                rightAnchor.add(showcaseFish);
+                showcaseFish.position.set(0.12, -0.35, 0.35);
+                showcaseFish.rotation.set(-Math.PI/6, Math.PI/2, Math.PI);
+                showcaseFish.scale.set(0.5,0.5,0.5);
+                setupShowcaseAnimation();
+            }
         }
         return;
     }
-    // bear changed -> animate old off, spawn new and walk in
+
+    // Bear (or cosmetic) changed -> animate old off, spawn new and walk in
     if (showcaseBear) {
         const leaveToRight = !(showcaseBear.userData?.fromRight);
         waddleOutShowcaseBear(leaveToRight, () => { createOrUpdateShowcase(); walkInShowcaseBear(leaveToRight); });
