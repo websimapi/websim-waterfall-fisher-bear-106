@@ -1,5 +1,3 @@
-
-```javascript
 import * as THREE from 'three';
 import { scene } from '../scene.js';
 import { createBear, updateBear, BEAR_Z_MIN, BEAR_Z_MAX, tickBearBlink } from '../entities/bear.js';
