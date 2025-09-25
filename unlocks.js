@@ -45,6 +45,12 @@ export const FISH = [
 
 export const COSMETICS = [
     {
+        id: 'none',
+        name: 'None',
+        asset: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=', // transparent pixel
+        unlockCondition: { type: 'score', value: 0 }
+    },
+    {
         id: 'scream_mask',
         name: 'Scream Mask',
         asset: 'scream_mask_unlock.png',
@@ -61,8 +67,8 @@ export function getPlayerProgress() {
         selectedBear: 'splashy',
         selectedFish: 'classic',
         highScore: 0,
-        unlockedCosmetics: ['scream_mask'],
-        selectedCosmetic: null,
+        unlockedCosmetics: ['none', 'scream_mask'],
+        selectedCosmetic: 'none',
     };
     try {
         const stored = localStorage.getItem(PROGRESS_KEY);

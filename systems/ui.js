@@ -1,4 +1,4 @@
-import { BEARS, FISH } from '../unlocks.js';
+import { BEARS, FISH, COSMETICS } from '../unlocks.js';
 
 let fadeTimeout;
 
@@ -168,13 +168,10 @@ export function populateUnlocks(progress, clickHandler) {
         fishContainer.appendChild(box);
     });
 
-    import('../unlocks.js').then(({ COSMETICS }) => {
-        cosmeticContainer.innerHTML = '';
-        COSMETICS.forEach(c => {
-            const isUnlocked = (progress.unlockedCosmetics || []).includes(c.id);
-            const isSelected = progress.selectedCosmetic === c.id;
-            const box = createUnlockBox(c, 'cosmetic', isUnlocked, isSelected, clickHandler);
-            cosmeticContainer.appendChild(box);
-        });
+    COSMETICS.forEach(c => {
+        const isUnlocked = (progress.unlockedCosmetics || []).includes(c.id);
+        const isSelected = progress.selectedCosmetic === c.id;
+        const box = createUnlockBox(c, 'cosmetic', isUnlocked, isSelected, clickHandler);
+        cosmeticContainer.appendChild(box);
     });
 }

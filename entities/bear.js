@@ -49,10 +49,10 @@ export function createBear(type = 'splashy', cosmeticId = null) {
     const eyeL = createVoxel(-0.28, 1.58, 0.50, 0.18, 0.18, 0.08, eyeBlackMat); eyeL.name = 'eyeL'; group.add(eyeL);
     const eyeR = createVoxel( 0.28, 1.58, 0.50, 0.18, 0.18, 0.08, eyeBlackMat); eyeR.name = 'eyeR'; group.add(eyeR);
     // snout: just a bit lighter than body (for splashy) and slightly deeper
-    group.add(createVoxel(0, 1.20, 0.62, 0.54, 0.36, 0.36, muzzleMat));
+    const snout = createVoxel(0, 1.20, 0.62, 0.54, 0.36, 0.36, muzzleMat); snout.name = 'snout'; group.add(snout);
     // nose: move up to top of snout and make it stick out more
-    group.add(createVoxel(0, 1.44, 0.82, 0.22, 0.16, 0.16, eyeBlackMat));
-    group.add(createVoxel(0, 1.12, 0.66, 0.18, 0.12, 0.1, eyeBlackMat)); /* small nose */
+    const noseTop = createVoxel(0, 1.44, 0.82, 0.22, 0.16, 0.16, eyeBlackMat); noseTop.name = 'noseTop'; group.add(noseTop);
+    const noseBottom = createVoxel(0, 1.12, 0.66, 0.18, 0.12, 0.1, eyeBlackMat); noseBottom.name = 'noseBottom'; group.add(noseBottom); /* small nose */
     group.add(createVoxel(-0.5, -1, 0, 0.5, 0.5, 0.5, bodyMat));
     group.add(createVoxel(0.5, -1, 0, 0.5, 0.5, 0.5, bodyMat));
 
@@ -100,11 +100,18 @@ export function createBear(type = 'splashy', cosmeticId = null) {
         const mask = new THREE.Group(); mask.name = 'cosmeticMask';
         const whiteMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
         const blackMat = new THREE.MeshLambertMaterial({ color: 0x111111 });
-        mask.add(createVoxel(0, 1.35, 0.95, 0.70, 0.95, 0.22, whiteMat));
-        mask.add(createVoxel(0.26, 1.45, 1.02, 0.18, 0.28, 0.10, blackMat));
-        mask.add(createVoxel(-0.26, 1.45, 1.02, 0.18, 0.28, 0.10, blackMat));
-        mask.add(createVoxel(0, 1.10, 1.06, 0.24, 0.32, 0.12, blackMat));
+        mask.add(createVoxel(0, 1.35, 0.60, 0.70, 0.95, 0.22, whiteMat)); // Moved closer
+        mask.add(createVoxel(0.26, 1.45, 0.67, 0.18, 0.28, 0.10, blackMat));
+        mask.add(createVoxel(-0.26, 1.45, 0.67, 0.18, 0.28, 0.10, blackMat));
+        mask.add(createVoxel(0, 1.10, 0.71, 0.24, 0.32, 0.12, blackMat));
         group.add(mask);
+
+        // Hide original facial features
+        eyeL.visible = false;
+        eyeR.visible = false;
+        snout.visible = false;
+        noseTop.visible = false;
+        noseBottom.visible = false;
     }
 
     return group;
